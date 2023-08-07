@@ -273,15 +273,9 @@ def dedupe(contains_dupes, threshold=70, scorer=fuzz.token_set_ratio):
             # take first item as our 'canonical example'
             extractor.append(filter_sort[0][0])
 
-    # uniquify *extractor* list
-    keys = {}
-    for e in extractor:
-        keys[e] = 1
+    keys = {e: 1 for e in extractor}
     extractor = keys.keys()
 
     # check that extractor differs from contain_dupes (e.g. duplicates were found)
     # if not, then return the original list
-    if len(extractor) == len(contains_dupes):
-        return contains_dupes
-    else:
-        return extractor
+    return contains_dupes if len(extractor) == len(contains_dupes) else extractor

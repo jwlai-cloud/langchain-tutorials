@@ -455,11 +455,10 @@ class ProcessTest(unittest.TestCase):
     def test_list_like_extract(self):
         """We should be able to use a list-like object for choices."""
         def generate_choices():
-            choices = ['a', 'Bb', 'CcC']
-            yield from choices
+            yield from ['a', 'Bb', 'CcC']
+
         search = 'aaa'
-        result = [(value, confidence) for value, confidence in
-                  process.extract(search, generate_choices())]
+        result = list(process.extract(search, generate_choices()))
         self.assertGreater(len(result), 0)
 
     def test_dict_like_extract(self):
@@ -509,7 +508,7 @@ class ProcessTest(unittest.TestCase):
 class TestCodeFormat(unittest.TestCase):
     def test_pep8_conformance(self):
         pep8style = pycodestyle.StyleGuide(quiet=False)
-        pep8style.options.ignore = pep8style.options.ignore + tuple(['E501'])
+        pep8style.options.ignore = pep8style.options.ignore + ('E501', )
         pep8style.input_dir('thefuzz')
         result = pep8style.check_files()
         self.assertEqual(result.total_errors, 0, "PEP8 POLICE - WOOOOOWOOOOOOOOOO")
