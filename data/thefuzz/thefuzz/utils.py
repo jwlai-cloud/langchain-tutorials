@@ -19,27 +19,24 @@ def validate_string(s):
 def check_for_equivalence(func):
     @functools.wraps(func)
     def decorator(*args, **kwargs):
-        if args[0] == args[1]:
-            return 100
-        return func(*args, **kwargs)
+        return 100 if args[0] == args[1] else func(*args, **kwargs)
+
     return decorator
 
 
 def check_for_none(func):
     @functools.wraps(func)
     def decorator(*args, **kwargs):
-        if args[0] is None or args[1] is None:
-            return 0
-        return func(*args, **kwargs)
+        return 0 if args[0] is None or args[1] is None else func(*args, **kwargs)
+
     return decorator
 
 
 def check_empty_string(func):
     @functools.wraps(func)
     def decorator(*args, **kwargs):
-        if len(args[0]) == 0 or len(args[1]) == 0:
-            return 0
-        return func(*args, **kwargs)
+        return 0 if len(args[0]) == 0 or len(args[1]) == 0 else func(*args, **kwargs)
+
     return decorator
 
 

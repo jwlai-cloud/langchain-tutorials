@@ -56,44 +56,44 @@ def print_result_from_timeit(stmt='pass', setup='pass', number=1000000):
 
 
 for s in choices:
-    print('Test validate_string for: "%s"' % s)
+    print(f'Test validate_string for: "{s}"')
     print_result_from_timeit('utils.validate_string(\'%s\')' % s, common_setup, number=iterations)
 
 print('')
 
 for s in mixed_strings + cirque_strings + choices:
-    print('Test full_process for: "%s"' % s)
+    print(f'Test full_process for: "{s}"')
     print_result_from_timeit('utils.full_process(u\'%s\')' % s,
                              common_setup + basic_setup, number=iterations)
 
 # benchmarking the core matching methods...
 
 for s in cirque_strings:
-    print('Test fuzz.ratio for string: "%s"' % s)
+    print(f'Test fuzz.ratio for string: "{s}"')
     print('-------------------------------')
     print_result_from_timeit('fuzz.ratio(u\'cirque du soleil\', u\'%s\')' % s,
                              common_setup + basic_setup, number=iterations / 100)
 
 for s in cirque_strings:
-    print('Test fuzz.partial_ratio for string: "%s"' % s)
+    print(f'Test fuzz.partial_ratio for string: "{s}"')
     print('-------------------------------')
     print_result_from_timeit('fuzz.partial_ratio(u\'cirque du soleil\', u\'%s\')'
                              % s, common_setup + basic_setup, number=iterations / 100)
 
 for s in cirque_strings:
-    print('Test fuzz.WRatio for string: "%s"' % s)
+    print(f'Test fuzz.WRatio for string: "{s}"')
     print('-------------------------------')
     print_result_from_timeit('fuzz.WRatio(u\'cirque du soleil\', u\'%s\')' % s,
                              common_setup + basic_setup, number=iterations / 100)
 
-print('Test process.extract(scorer =  fuzz.QRatio) for string: "%s"' % s)
+print(f'Test process.extract(scorer =  fuzz.QRatio) for string: "{s}"')
 print('-------------------------------')
 print_result_from_timeit('process.extract(u\'cirque du soleil\', choices, scorer =  fuzz.QRatio)',
                              common_setup + basic_setup + " from thefuzz import process; import string,random; random.seed(18);"
                              " choices = [\'\'.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(30)) for s in range(5000)]",
                               number=10)
 
-print('Test process.extract(scorer =  fuzz.WRatio) for string: "%s"' % s)
+print(f'Test process.extract(scorer =  fuzz.WRatio) for string: "{s}"')
 print('-------------------------------')
 print_result_from_timeit('process.extract(u\'cirque du soleil\', choices, scorer =  fuzz.WRatio)',
                              common_setup + basic_setup + " from thefuzz import process; import string,random; random.seed(18);"
@@ -110,7 +110,7 @@ test += 'title_blob = """%s"""\n' % title_blob
 test += 'title_blob = title_blob.strip()\n'
 test += 'titles = title_blob.split("\\n")\n'
 
-print('Real world ratio(): "%s"' % s)
+print(f'Real world ratio(): "{s}"')
 print('-------------------------------')
 test += 'prepared_ratio = functools.partial(fuzz.ratio, "%s")\n' % s
 test += 'titles.sort(key=prepared_ratio)\n'

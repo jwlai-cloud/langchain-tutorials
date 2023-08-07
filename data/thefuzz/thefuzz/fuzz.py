@@ -52,7 +52,7 @@ def partial_ratio(s1, s2):
     #   best score === ratio("abcd", "Xbcd")
     scores = []
     for block in blocks:
-        long_start = block[1] - block[0] if (block[1] - block[0]) > 0 else 0
+        long_start = max(block[1] - block[0], 0)
         long_end = long_start + len(shorter)
         long_substr = longer[long_start:long_end]
 
@@ -90,10 +90,7 @@ def _token_sort(s1, s2, partial=True, force_ascii=True, full_process=True):
     sorted1 = _process_and_sort(s1, force_ascii, full_process=full_process)
     sorted2 = _process_and_sort(s2, force_ascii, full_process=full_process)
 
-    if partial:
-        return partial_ratio(sorted1, sorted2)
-    else:
-        return ratio(sorted1, sorted2)
+    return partial_ratio(sorted1, sorted2) if partial else ratio(sorted1, sorted2)
 
 
 def token_sort_ratio(s1, s2, force_ascii=True, full_process=True):
@@ -142,19 +139,15 @@ def _token_set(s1, s2, partial=True, force_ascii=True, full_process=True):
     sorted_1to2 = " ".join(sorted(diff1to2))
     sorted_2to1 = " ".join(sorted(diff2to1))
 
-    combined_1to2 = sorted_sect + " " + sorted_1to2
-    combined_2to1 = sorted_sect + " " + sorted_2to1
+    combined_1to2 = f"{sorted_sect} {sorted_1to2}"
+    combined_2to1 = f"{sorted_sect} {sorted_2to1}"
 
     # strip
     sorted_sect = sorted_sect.strip()
     combined_1to2 = combined_1to2.strip()
     combined_2to1 = combined_2to1.strip()
 
-    if partial:
-        ratio_func = partial_ratio
-    else:
-        ratio_func = ratio
-
+    ratio_func = partial_ratio if partial else ratio
     pairwise = [
         ratio_func(sorted_sect, combined_1to2),
         ratio_func(sorted_sect, combined_2to1),
@@ -199,10 +192,7 @@ def QRatio(s1, s2, force_ascii=True, full_process=True):
 
     if not utils.validate_string(p1):
         return 0
-    if not utils.validate_string(p2):
-        return 0
-
-    return ratio(p1, p2)
+    return 0 if not utils.validate_string(p2) else ratio(p1, p2)
 
 
 def UQRatio(s1, s2, full_process=True):
@@ -266,22 +256,12 @@ def WRatio(s1, s2, force_ascii=True, full_process=True):
     if not utils.validate_string(p2):
         return 0
 
-    # should we look at partials?
-    try_partial = True
     unbase_scale = .95
-    partial_scale = .90
-
     base = ratio(p1, p2)
     len_ratio = float(max(len(p1), len(p2))) / min(len(p1), len(p2))
 
-    # if strings are similar length, don't use partials
-    if len_ratio < 1.5:
-        try_partial = False
-
-    # if one string is much much shorter than the other
-    if len_ratio > 8:
-        partial_scale = .6
-
+    try_partial = len_ratio >= 1.5
+    partial_scale = .6 if len_ratio > 8 else .90
     if try_partial:
         partial = partial_ratio(p1, p2) * partial_scale
         ptsor = partial_token_sort_ratio(p1, p2, full_process=False) \
